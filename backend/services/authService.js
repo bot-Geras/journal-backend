@@ -1,9 +1,9 @@
-import { hash, compare } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
-import { query } from '../utils/db';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { query } from '../utils/db.js';
 
 const registerUser = async (username, password) => {
-  const hashedPassword = await hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
   const result = await query(
     'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *',
     [username, hashedPassword]
@@ -16,14 +16,14 @@ const authenticateUser = async (username, password) => {
   const user = result.rows[0];
   if (!user) throw new Error('Invalid username or password');
 
-  const isValid = await compare(password, user.password);
+  const isValid = await bcrypt.compare(password, user.password);
   if (!isValid) throw new Error('Invalid username or password');
 
-  const token = sign({ id: user.id, username: user.username }, process.env.JWT_SECRET);
+  const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET);
   return { user, token };
 };
 
-export default {
+export  {
   registerUser,
   authenticateUser,
 };

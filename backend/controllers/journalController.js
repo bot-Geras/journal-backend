@@ -1,20 +1,19 @@
-const {
-    addJournalEntry,
-    getJournalEntries,
-    updateJournalEntry,
-    deleteJournalEntry,
-  } = require('../services/journalService').default;
+import{
+  addJournalEntry, getJournalEntries, updateJournalEntry, getJournalEntriesByCategory, deleteJournalEntry,
+} from '../services/journalService.js';
+
   
-  const addEntry = async (req, res) => {
-    const { title, content, category, date } = req.body;
-    const user = req.user;
-    try {
-      const entry = await addJournalEntry(user, title, content, category, new Date(date));
-      res.status(201).json(entry);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  };
+const addEntry = async (req, res) => {
+  const { title, content, category } = req.body;
+  const user = req.user;
+  try {
+    const entry = await addJournalEntry(user, title, content, category);
+    res.status(201).json(entry);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
   
   const getEntries = async (req, res) => {
     const user = req.user;
@@ -25,13 +24,23 @@ const {
       res.status(400).json({ error: error.message });
     }
   };
+  const getEntriesByCategory = async (req, res) => {
+    const { category } = req.params;
+    const user = req.user;
+    try {
+      const entries = await getJournalEntriesByCategory(user, category);
+      res.status(200).json(entries);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
   
   const updateEntry = async (req, res) => {
     const { id } = req.params;
-    const { title, content, category, date } = req.body;
+    const { title, content, category } = req.body;
     const user = req.user;
     try {
-      const entry = await updateJournalEntry(id, user, title, content, category, new Date(date));
+      const entry = await updateJournalEntry(id, user, title, content, category);
       res.status(200).json(entry);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -49,9 +58,10 @@ const {
     }
   };
   
-  module.exports = {
+  export  {
     addEntry,
     getEntries,
     updateEntry,
     deleteEntry,
+    getEntriesByCategory,
   };

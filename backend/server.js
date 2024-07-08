@@ -3,18 +3,20 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 
-import authRoutes from './routes/authRoutes';
-import journalRoutes from './routes/journalRoutes';
-import db from './utils/db';
+import authRoutes from './routes/authRoutes.js';
+import journalRoutes from './routes/journalRoutes.js';
+import {query} from './utils/db.js';
 
 const PORT = process.env.PORT || 4000
 const app = express()
-app.use('/api/auth', authRoutes);
-app.use('/api/journals', journalRoutes);
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
-db.query('SELECT NOW()', (err, res) => {
+app.use('/api/auth', authRoutes);
+app.use('/api/journals', journalRoutes);
+
+query('SELECT NOW()', (err, res) => {
     if (err) {
       console.error('Database connection error:', err);
     } else {

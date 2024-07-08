@@ -1,4 +1,4 @@
-import { registerUser, authenticateUser } from '../services/authService';
+import { registerUser, authenticateUser } from '../services/authService.js'
 
 const register = async (req, res) => {
   const { username, password } = req.body;
@@ -20,7 +20,7 @@ const login = async (req, res) => {
   }
 };
 
-export default {
+export  {
   register,
   login,
 };
